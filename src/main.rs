@@ -101,6 +101,9 @@ impl TaskManager {
         if title.trim().is_empty() {
             return Err(TaskError::EmptyTitle);
         }
+        if self.tasks.iter().any(|t| t.id == self.next_id) {
+            return Err(TaskError::DuplicateId(self.next_id));
+        }
         let task = Task {
             id: self.next_id,
             title: title.to_string(),
@@ -115,6 +118,10 @@ impl TaskManager {
     // ── 7. Option type — safe null handling ────────────────────────────────
     fn find_by_id(&self, id: u32) -> Option<&Task> {
         self.tasks.iter().find(|t| t.id == id)
+    }
+
+    fn get_by_id(&self, id: u32) -> Result<&Task, TaskError> {
+        self.tasks.iter().find(|t| t.id == id).ok_or(TaskError::NotFound(id))
     }
 
     // ── 8. Closures & iterators ────────────────────────────────────────────
@@ -210,6 +217,10 @@ fn main() {
     println!("\n═══ Error Handling ═══");
     match mgr.add("", Priority::Low, vec![]) {
         Ok(_) => println!("  This shouldn't happen"),
+        Err(e) => println!("  ❌ Expected error: {e}"),
+    }
+    match mgr.get_by_id(99) {
+        Ok(task) => println!("  Found: {task}"),
         Err(e) => println!("  ❌ Expected error: {e}"),
     }
 
