@@ -88,7 +88,7 @@ cargo run
 
 ## Sample Output
 
-```
+```text
 ╔══════════════════════════════════════╗
 ║   Rust Showcase — Key Features       ║
 ╚══════════════════════════════════════╝
